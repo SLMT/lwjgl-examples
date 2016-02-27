@@ -72,9 +72,9 @@ public class Tutorial02 {
 		FloatBuffer vertBuffer = BufferUtils.createFloatBuffer(vertices.length);
 		vertBuffer.put(vertices);
 		vertBuffer.rewind();
-
-		vboId = GL15.glGenBuffers(); // This function is specialized for the
-										// case of generating one buffer
+		
+		// A specialized version for generating one buffer
+		vboId = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertBuffer, GL15.GL_STATIC_DRAW);
 	}
