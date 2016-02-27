@@ -1,19 +1,4 @@
-package tw.slmt.lwjgl;
-
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glVertex3f;
-import static org.lwjgl.opengl.GL11.glViewport;
+package tw.slmt.lwjgl.ogldevtutorial;
 
 import java.nio.IntBuffer;
 
@@ -21,9 +6,10 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 
-public class HelloTriangle {
+public class Tutorial01 {
 	
 	// Note that this program should run with VM argument
 	// '-XstartOnFirstThread' for OS X
@@ -34,7 +20,8 @@ public class HelloTriangle {
 		if (GLFW.glfwInit() != GLFW.GLFW_TRUE)
 			System.exit(-1);
 		
-		long windowHandle = GLFW.glfwCreateWindow(640, 480, "Hello Triangle", MemoryUtil.NULL, MemoryUtil.NULL);
+		long windowHandle = GLFW.glfwCreateWindow(1024, 768, 
+				"Tutorial 1 - Open a window", MemoryUtil.NULL, MemoryUtil.NULL);
 		if (windowHandle == MemoryUtil.NULL) {
 			GLFW.glfwTerminate();
 			System.exit(-1);
@@ -80,24 +67,24 @@ public class HelloTriangle {
 		float ratio = (float) width / (float) height;
 		float time = (float) GLFW.glfwGetTime();
 		
-		glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT);
+		GL11.glViewport(0, 0, width, height);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GL11.glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
         
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glRotatef(time * 50.f, 0.f, 1.f, 0.f);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glLoadIdentity();
+		GL11.glRotatef(time * 50.f, 0.f, 1.f, 0.f);
         
-        glBegin(GL_TRIANGLES);
-        glColor3f(1.f, 0.f, 0.f);
-        glVertex3f(-0.6f, -0.4f, 0.f);
-        glColor3f(0.f, 1.f, 0.f);
-        glVertex3f(0.6f, -0.4f, 0.f);
-        glColor3f(0.f, 0.f, 1.f);
-        glVertex3f(0.f, 0.6f, 0.f);
-        glEnd();
+		GL11.glBegin(GL11.GL_TRIANGLES);
+		GL11.glColor3f(1.f, 0.f, 0.f);
+		GL11.glVertex3f(-0.6f, -0.4f, 0.f);
+		GL11.glColor3f(0.f, 1.f, 0.f);
+		GL11.glVertex3f(0.6f, -0.4f, 0.f);
+		GL11.glColor3f(0.f, 0.f, 1.f);
+		GL11.glVertex3f(0.f, 0.6f, 0.f);
+		GL11.glEnd();
 	}
 }

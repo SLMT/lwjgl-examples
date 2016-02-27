@@ -5,3 +5,6 @@
 
 # java classes
 target/
+
+# LWJGL
+*.log
