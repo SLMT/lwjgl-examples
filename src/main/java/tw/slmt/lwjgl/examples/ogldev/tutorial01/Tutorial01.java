@@ -1,4 +1,4 @@
-package tw.slmt.lwjgl.ogldevtutorial;
+package tw.slmt.lwjgl.examples.ogldev.tutorial01;
 
 import java.nio.IntBuffer;
 

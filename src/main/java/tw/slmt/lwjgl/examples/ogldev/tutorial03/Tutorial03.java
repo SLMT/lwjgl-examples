@@ -1,4 +1,4 @@
-package tw.slmt.lwjgl.ogldevtutorial;
+package tw.slmt.lwjgl.examples.ogldev.tutorial03;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -12,12 +12,12 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
 
-public class Tutorial02 {
+public class Tutorial03 {
 
 	// Note that this program should run with VM argument
 	// '-XstartOnFirstThread' for OS X
 
-	private static final String WINDOW_TITLE = "Tutorial 2 - Hello Dot!";
+	private static final String WINDOW_TITLE = "Tutorial 3 - First Triangle";
 
 	private static int vboId;
 
@@ -68,9 +68,13 @@ public class Tutorial02 {
 	private static void createVertexBuffer() {
 		// Note that we should use BufferUtil instead of MemoryUtil here.
 		// Or an undefined behavior will happen.
-		float[] vertices = new float[] { 0.0f, 0.0f, 0.0f };
-		FloatBuffer vertBuffer = BufferUtils.createFloatBuffer(vertices.length);
-		vertBuffer.put(vertices);
+		float[][] vertices = new float[3][];
+		vertices[0] = new float[] { -1.0f, -1.0f, 0.0f };
+		vertices[1] = new float[] { 1.0f, -1.0f, 0.0f };
+		vertices[2] = new float[] { 0.0f, 1.0f, 0.0f };
+		FloatBuffer vertBuffer = BufferUtils.createFloatBuffer(3 * 3);
+		for (int i = 0; i < vertices.length; i++)
+			vertBuffer.put(vertices[i]);
 		vertBuffer.rewind();
 		
 		// A specialized version for generating one buffer
@@ -86,7 +90,7 @@ public class Tutorial02 {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
 		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
 
-		GL11.glDrawArrays(GL11.GL_POINTS, 0, 1);
+		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 3);
 
 		GL20.glDisableVertexAttribArray(0);
 	}

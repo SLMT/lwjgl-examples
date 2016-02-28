@@ -1,4 +1,4 @@
-package tw.slmt.lwjgl.ogldevtutorial;
+package tw.slmt.lwjgl.examples.ogldev.tutorial09;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -12,16 +12,21 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
 
-public class Tutorial04 {
+import tw.slmt.lwjgl.examples.ogldev.OgldevUtil;
+
+public class Tutorial09 {
 
 	// Note that this program should run with VM argument
 	// '-XstartOnFirstThread' for OS X
 
-	private static final String WINDOW_TITLE = "Tutorial 4 - Shaders";
-	private static final String VERT_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial04/shader.vs";
-	private static final String FRAG_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial04/shader.fs";
+	private static final String WINDOW_TITLE = "Tutorial 9 - Interpolation";
+	private static final String VERT_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial09/shader.vs";
+	private static final String FRAG_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial09/shader.fs";
 
 	private static int vboId;
+	private static int worldLocation;
+	private static float scale = 0.0f;
+	private static FloatBuffer worldMatBuf = BufferUtils.createFloatBuffer(4 * 4);
 
 	public static void main(String[] args) {
 		GLFW.glfwSetErrorCallback(GLFWErrorCallback.createPrint());
@@ -58,7 +63,7 @@ public class Tutorial04 {
 			IntBuffer heightBuf = MemoryUtil.memAllocInt(1);
 
 			GLFW.glfwGetFramebufferSize(windowHandle, widthBuf, heightBuf);
-
+			
 			renderScene();
 
 			GLFW.glfwSwapBuffers(windowHandle);
@@ -141,10 +146,29 @@ public class Tutorial04 {
 		}
 		
 		GL20.glUseProgram(shaderProgram);
+		
+		worldLocation = GL20.glGetUniformLocation(shaderProgram, "world");
 	}
-
+	
+	// Note that we are not using GLUT here.
+	// Therefore, we do not need to register this function
+	// as the description on OGLDev website.
 	private static void renderScene() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		
+		scale += 0.01f;
+		
+		float[] worldMatrix = new float[] {
+			(float) Math.sin(scale), 0.0f, 0.0f, 0.0f,
+			0.0f, (float) Math.sin(scale), 0.0f, 0.0f,
+			0.0f, 0.0f, (float) Math.sin(scale), 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+		};
+		worldMatBuf.rewind();
+		worldMatBuf.put(worldMatrix);
+		worldMatBuf.rewind();
+		
+		GL20.glUniformMatrix4fv(worldLocation, true, worldMatBuf);
 
 		GL20.glEnableVertexAttribArray(0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);

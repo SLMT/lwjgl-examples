@@ -1,4 +1,4 @@
-package tw.slmt.lwjgl.ogldevtutorial;
+package tw.slmt.lwjgl.examples.ogldev.tutorial04;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -12,12 +12,16 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
 
-public class Tutorial03 {
+import tw.slmt.lwjgl.examples.ogldev.OgldevUtil;
+
+public class Tutorial04 {
 
 	// Note that this program should run with VM argument
 	// '-XstartOnFirstThread' for OS X
 
-	private static final String WINDOW_TITLE = "Tutorial 3 - First Triangle";
+	private static final String WINDOW_TITLE = "Tutorial 4 - Shaders";
+	private static final String VERT_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial04/shader.vs";
+	private static final String FRAG_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial04/shader.fs";
 
 	private static int vboId;
 
@@ -48,6 +52,8 @@ public class Tutorial03 {
 		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 		createVertexBuffer();
+		
+		compileShaders();
 
 		while (GLFW.glfwWindowShouldClose(windowHandle) != GLFW.GLFW_TRUE) {
 			IntBuffer widthBuf = MemoryUtil.memAllocInt(1);
@@ -76,11 +82,67 @@ public class Tutorial03 {
 		for (int i = 0; i < vertices.length; i++)
 			vertBuffer.put(vertices[i]);
 		vertBuffer.rewind();
-		
+
 		// A specialized version for generating one buffer
 		vboId = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertBuffer, GL15.GL_STATIC_DRAW);
+	}
+
+	private static void addShader(int shaderProgram, String shaderText,
+			int shaderType) {
+		int shaderObj = GL20.glCreateShader(shaderType);
+		if (shaderObj == 0)
+			throw new RuntimeException("Error creating shader type "
+					+ shaderType + "\n");
+		
+		// A Java-Single-String version of glShaderSource
+		GL20.glShaderSource(shaderObj, shaderText);
+		GL20.glCompileShader(shaderObj);
+		int success = GL20.glGetShaderi(shaderObj, GL20.GL_LINK_STATUS);
+		if (success == 0) { 
+			String infoLog = GL20.glGetShaderInfoLog(shaderObj);
+			System.err.print(infoLog);
+			System.exit(1);
+		}
+		
+		GL20.glAttachShader(shaderProgram, shaderObj);
+	}
+
+	private static void compileShaders() {
+		int shaderProgram = GL20.glCreateProgram();
+		if (shaderProgram == 0)
+			throw new RuntimeException("Error creating shader program\n");
+
+		String vs = OgldevUtil.readFile(VERT_SHADER_FILE);
+		String fs = OgldevUtil.readFile(FRAG_SHADER_FILE);
+
+		if (vs == null)
+			throw new RuntimeException("Error reading vertex shader files\n");
+		if (fs == null)
+			throw new RuntimeException("Error reading fragment shader files\n");
+		
+		addShader(shaderProgram, vs, GL20.GL_VERTEX_SHADER);
+		addShader(shaderProgram, fs, GL20.GL_FRAGMENT_SHADER);
+		
+		int success;
+		GL20.glLinkProgram(shaderProgram);
+		success = GL20.glGetProgrami(shaderProgram, GL20.GL_LINK_STATUS);
+		if (success == 0) { 
+			String infoLog = GL20.glGetProgramInfoLog(shaderProgram);
+			System.err.print(infoLog);
+			System.exit(1);
+		}
+		
+		GL20.glValidateProgram(shaderProgram);
+		success = GL20.glGetProgrami(shaderProgram, GL20.GL_VALIDATE_STATUS);
+		if (success == 0) { 
+			String infoLog = GL20.glGetProgramInfoLog(shaderProgram);
+			System.err.print(infoLog);
+			System.exit(1);
+		}
+		
+		GL20.glUseProgram(shaderProgram);
 	}
 
 	private static void renderScene() {

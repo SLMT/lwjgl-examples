@@ -1,4 +1,4 @@
-package tw.slmt.lwjgl.ogldevtutorial;
+package tw.slmt.lwjgl.examples.ogldev.tutorial06;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -12,18 +12,21 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
 
-public class Tutorial05 {
+import tw.slmt.lwjgl.examples.ogldev.OgldevUtil;
+
+public class Tutorial06 {
 
 	// Note that this program should run with VM argument
 	// '-XstartOnFirstThread' for OS X
 
-	private static final String WINDOW_TITLE = "Tutorial 5 - Uniform Variables";
-	private static final String VERT_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial05/shader.vs";
-	private static final String FRAG_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial05/shader.fs";
+	private static final String WINDOW_TITLE = "Tutorial 6 - Translation Transformation";
+	private static final String VERT_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial06/shader.vs";
+	private static final String FRAG_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial06/shader.fs";
 
 	private static int vboId;
-	private static int scaleLocation;
+	private static int worldLocation;
 	private static float scale = 0.0f;
+	private static FloatBuffer worldMatBuf = BufferUtils.createFloatBuffer(4 * 4);
 
 	public static void main(String[] args) {
 		GLFW.glfwSetErrorCallback(GLFWErrorCallback.createPrint());
@@ -144,7 +147,7 @@ public class Tutorial05 {
 		
 		GL20.glUseProgram(shaderProgram);
 		
-		scaleLocation = GL20.glGetUniformLocation(shaderProgram, "scale");
+		worldLocation = GL20.glGetUniformLocation(shaderProgram, "world");
 	}
 	
 	// Note that we are not using GLUT here.
@@ -153,9 +156,19 @@ public class Tutorial05 {
 	private static void renderScene() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		
-		scale += 0.001f;
+		scale += 0.01f;
 		
-		GL20.glUniform1f(scaleLocation, (float) Math.sin(scale));
+		float[] worldMatrix = new float[] {
+			1.0f, 0.0f, 0.0f, (float) Math.sin(scale),
+			0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+		};
+		worldMatBuf.rewind();
+		worldMatBuf.put(worldMatrix);
+		worldMatBuf.rewind();
+		
+		GL20.glUniformMatrix4fv(worldLocation, true, worldMatBuf);
 
 		GL20.glEnableVertexAttribArray(0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);

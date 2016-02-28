@@ -1,4 +1,4 @@
-package tw.slmt.lwjgl.ogldevtutorial;
+package tw.slmt.lwjgl.examples.ogldev;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

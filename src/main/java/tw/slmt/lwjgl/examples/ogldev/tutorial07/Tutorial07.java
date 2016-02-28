@@ -1,4 +1,4 @@
-package tw.slmt.lwjgl.ogldevtutorial;
+package tw.slmt.lwjgl.examples.ogldev.tutorial07;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -12,14 +12,16 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
 
-public class Tutorial06 {
+import tw.slmt.lwjgl.examples.ogldev.OgldevUtil;
+
+public class Tutorial07 {
 
 	// Note that this program should run with VM argument
 	// '-XstartOnFirstThread' for OS X
 
-	private static final String WINDOW_TITLE = "Tutorial 6 - Translation Transformation";
-	private static final String VERT_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial06/shader.vs";
-	private static final String FRAG_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial06/shader.fs";
+	private static final String WINDOW_TITLE = "Tutorial 7 - Rotation Transformation";
+	private static final String VERT_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial07/shader.vs";
+	private static final String FRAG_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial07/shader.fs";
 
 	private static int vboId;
 	private static int worldLocation;
@@ -157,8 +159,8 @@ public class Tutorial06 {
 		scale += 0.01f;
 		
 		float[] worldMatrix = new float[] {
-			1.0f, 0.0f, 0.0f, (float) Math.sin(scale),
-			0.0f, 1.0f, 0.0f, 0.0f,
+			(float) Math.cos(scale), (float) -Math.sin(scale), 0.0f, 0.0f,
+			(float) Math.sin(scale), (float) Math.cos(scale), 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
 		};
