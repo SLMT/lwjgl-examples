@@ -99,7 +99,7 @@ public class Tutorial04 {
 		// A Java-Single-String version of glShaderSource
 		GL20.glShaderSource(shaderObj, shaderText);
 		GL20.glCompileShader(shaderObj);
-		int success = GL20.glGetShaderi(shaderObj, GL20.GL_LINK_STATUS);
+		int success = GL20.glGetShaderi(shaderObj, GL20.GL_COMPILE_STATUS);
 		if (success == 0) { 
 			String infoLog = GL20.glGetShaderInfoLog(shaderObj);
 			System.err.print(infoLog);
