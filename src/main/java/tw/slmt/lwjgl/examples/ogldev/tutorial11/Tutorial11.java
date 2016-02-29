@@ -182,9 +182,9 @@ public class Tutorial11 {
 		scale += 0.01f;
 		
 		Pipeline p = new Pipeline();
-		p.scale(new float[]{scale, scale, scale});
-		p.worldPos(new float[]{(float) Math.sin(scale), 0.0f, 0.0f});
-		p.rotate(new float[]{scale * 90, scale * 90, scale * 90});
+		p.scale(new float[]{sinf(scale * 0.1f), sinf(scale * 0.1f), sinf(scale * 0.1f)});
+		p.worldPos(new float[]{sinf(scale), 0.0f, 0.0f});
+		p.rotate(new float[]{sinf(scale * 90), sinf(scale * 90), sinf(scale * 90)});
 		
 		p.getWorldTrans().transferToBuffer(worldMatBuf);
 		worldMatBuf.rewind();
@@ -199,5 +199,9 @@ public class Tutorial11 {
 		GL11.glDrawElements(GL11.GL_TRIANGLES, 12, GL11.GL_UNSIGNED_INT, 0);
 
 		GL20.glDisableVertexAttribArray(0);
+	}
+	
+	private static float sinf(float val) {
+		return (float) Math.sin(val);
 	}
 }
