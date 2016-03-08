@@ -7,6 +7,9 @@ public class Pipeline {
 	private float[] rotateInfo = new float[] {0.0f, 0.0f, 0.0f};
 	
 	private Matrix4f worldTrans;
+	private Matrix4f wpTrans;
+	
+	private PersProjInfo persProjInfo;
 	
 	public void scale(float[] scale) {
 		this.scale = scale;
@@ -30,5 +33,19 @@ public class Pipeline {
 		
 		worldTrans = translationTrans.multiply(rotateTrans).multiply(scaleTrans);
 	    return worldTrans;
+	}
+	
+	public Matrix4f getWPTrans() {
+		Matrix4f persProjTrans;
+		
+		getWorldTrans();
+		persProjTrans = Matrix4f.initPersProjTransform(persProjInfo);
+		
+		wpTrans = persProjTrans.multiply(worldTrans);
+		return wpTrans;
+	}
+	
+	public void setPersProjInfo(PersProjInfo persProjInfo) {
+		this.persProjInfo = persProjInfo;
 	}
 }

@@ -4,7 +4,12 @@ import java.nio.FloatBuffer;
 
 public class Matrix4f {
 	
-	public float[][] values = new float[4][];
+	public float[][] values = new float[][] {
+		{1.0f, 0.0f, 0.0f, 0.0f},	
+		{0.0f, 1.0f, 0.0f, 0.0f},
+		{0.0f, 0.0f, 1.0f, 0.0f},
+		{0.0f, 0.0f, 0.0f, 1.0f}
+	};
 	
 	public static Matrix4f initScaleTransform(float scaleX, float scaleY, float scaleZ) {
 		Matrix4f mat = new Matrix4f();
@@ -53,11 +58,23 @@ public class Matrix4f {
 		return mat;
 	}
 	
-	public Matrix4f() {
-		values[0] = new float[] {1.0f, 0.0f, 0.0f, 0.0f};
-		values[1] = new float[] {0.0f, 1.0f, 0.0f, 0.0f};
-		values[2] = new float[] {0.0f, 0.0f, 1.0f, 0.0f};
-		values[3] = new float[] {0.0f, 0.0f, 0.0f, 1.0f};
+	public static Matrix4f initPersProjTransform(PersProjInfo p) {
+		Matrix4f mat = new Matrix4f();
+		
+		float ar = p.width / p.height;
+		float zNear = p.zNear;
+		float zFar = p.zFar;
+		float zRange = p.zNear - p.zFar;
+		float tanHalfFov = (float) Math.tan(Math.toRadians(p.fov / 2.0));
+		
+		mat.values[0][0] = 1.0f / (tanHalfFov * ar);
+		mat.values[1][1] = 1.0f / tanHalfFov;
+		mat.values[2][2] = (-zNear - zFar) / zRange;
+		mat.values[2][3] = 2.0f * zFar * zNear / zRange;
+		mat.values[3][2] = 1.0f;
+		mat.values[3][3] = 0.0f;
+		
+		return mat;
 	}
 	
 	public Matrix4f multiply(Matrix4f right) {
