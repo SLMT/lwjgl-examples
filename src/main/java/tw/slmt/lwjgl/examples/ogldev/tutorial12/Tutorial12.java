@@ -68,6 +68,10 @@ public class Tutorial12 {
 		
 		compileShaders();
 		
+		// This line was not in the original example,
+		// but using it can provide better visual experience. 
+		//GL11.glEnable(GL11.GL_DEPTH_TEST);
+		
 		initProjection();
 
 		while (GLFW.glfwWindowShouldClose(windowHandle) != GLFW.GLFW_TRUE) {
@@ -194,9 +198,12 @@ public class Tutorial12 {
 	// Therefore, we do not need to register this function
 	// as the description on OGLDev website.
 	private static void renderScene() {
+		// This line was not in the original example,
+		// but using it can provide better visual experience. 
+		//GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		
-		scale += 0.1f;
+		scale += 0.5f;
 		
 		Pipeline p = new Pipeline();
 		p.rotate(new float[]{0.0f, scale, 0.0f});
