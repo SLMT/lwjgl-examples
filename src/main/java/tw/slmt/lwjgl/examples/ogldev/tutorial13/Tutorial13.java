@@ -1,4 +1,4 @@
-package tw.slmt.lwjgl.examples.ogldev.tutorial11;
+package tw.slmt.lwjgl.examples.ogldev.tutorial13;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -13,32 +13,37 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
 
 import tw.slmt.lwjgl.examples.ogldev.OgldevUtil;
+import tw.slmt.lwjgl.examples.ogldev.PersProjInfo;
 import tw.slmt.lwjgl.examples.ogldev.Pipeline;
 import tw.slmt.lwjgl.examples.ogldev.Vector3f;
 
-public class Tutorial11 {
+public class Tutorial13 {
 
 	// Note that this program should run with VM argument
 	// '-XstartOnFirstThread' for OS X
+	
+	private static final int WINDOW_WIDTH = 1024;
+	private static final int WINDOW_HEIGHT = 768;
 
-	private static final String WINDOW_TITLE = "Tutorial 11 - Concatenating Transformations";
-	private static final String VERT_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial11/shader.vs";
-	private static final String FRAG_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial11/shader.fs";
+	private static final String WINDOW_TITLE = "Tutorial 13 - Camera Space";
+	private static final String VERT_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial13/shader.vs";
+	private static final String FRAG_SHADER_FILE = OgldevUtil.RESOURCE_DIR_PATH + "/tutorial13/shader.fs";
 
 	private static int vboId;
 	private static int iboId;
 	
-	private static int worldLocation;
+	private static int wvpLocation;
 	private static float scale = 0.0f;
+	private static PersProjInfo persProjInfo;
 	
-	private static FloatBuffer worldMatBuf = BufferUtils.createFloatBuffer(4 * 4);
+	private static FloatBuffer wvpMatBuf = BufferUtils.createFloatBuffer(4 * 4);
 
 	public static void main(String[] args) {
 		GLFW.glfwSetErrorCallback(GLFWErrorCallback.createPrint());
 		if (GLFW.glfwInit() != GLFW.GLFW_TRUE)
 			System.exit(-1);
 
-		long windowHandle = GLFW.glfwCreateWindow(1024, 768, WINDOW_TITLE,
+		long windowHandle = GLFW.glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE,
 				MemoryUtil.NULL, MemoryUtil.NULL);
 		if (windowHandle == MemoryUtil.NULL) {
 			GLFW.glfwTerminate();
@@ -63,6 +68,12 @@ public class Tutorial11 {
 		createIndexBuffer();
 		
 		compileShaders();
+		
+		// This line was not in the original example,
+		// but using it can provide better visual experience. 
+		//GL11.glEnable(GL11.GL_DEPTH_TEST);
+		
+		initProjection();
 
 		while (GLFW.glfwWindowShouldClose(windowHandle) != GLFW.GLFW_TRUE) {
 			IntBuffer widthBuf = MemoryUtil.memAllocInt(1);
@@ -84,9 +95,9 @@ public class Tutorial11 {
 		// Note that we should use BufferUtil instead of MemoryUtil here.
 		// Or an undefined behavior will happen.
 		float[][] vertices = new float[4][];
-		vertices[0] = new float[] { -1.0f, -1.0f, 0.0f };
-		vertices[1] = new float[] { 0.0f, -1.0f, 1.0f };
-		vertices[2] = new float[] { 1.0f, -1.0f, 0.0f };
+		vertices[0] = new float[] { -1.0f, -1.0f, 0.5773f };
+		vertices[1] = new float[] { 0.0f, -1.0f, -1.15475f };
+		vertices[2] = new float[] { 1.0f, -1.0f, 0.5773f };
 		vertices[3] = new float[] { 0.0f, 1.0f, 0.0f };
 		FloatBuffer vertBuffer = BufferUtils.createFloatBuffer(4 * 3);
 		for (int i = 0; i < vertices.length; i++)
@@ -171,26 +182,43 @@ public class Tutorial11 {
 		
 		GL20.glUseProgram(shaderProgram);
 		
-		worldLocation = GL20.glGetUniformLocation(shaderProgram, "world");
+		wvpLocation = GL20.glGetUniformLocation(shaderProgram, "wvp");
+	}
+	
+	private static void initProjection() {
+		persProjInfo = new PersProjInfo();
+		
+		persProjInfo.fov = 60.0f;
+		persProjInfo.height = WINDOW_HEIGHT;
+		persProjInfo.width = WINDOW_WIDTH;
+		persProjInfo.zNear = 1.0f;
+		persProjInfo.zFar = 100.0f;
 	}
 	
 	// Note that we are not using GLUT here.
 	// Therefore, we do not need to register this function
 	// as the description on OGLDev website.
 	private static void renderScene() {
+		// This line was not in the original example,
+		// but using it can provide better visual experience. 
+		//GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		
-		scale += 0.01f;
+		scale += 0.5f;
 		
 		Pipeline p = new Pipeline();
-		p.scale(new Vector3f(sinf(scale * 0.1f), sinf(scale * 0.1f), sinf(scale * 0.1f)));
-		p.worldPos(new Vector3f(sinf(scale), 0.0f, 0.0f));
-		p.rotate(new Vector3f(sinf(scale * 90), sinf(scale * 90), sinf(scale * 90)));
+		p.rotate(new Vector3f(0.0f, scale, 0.0f));
+		p.worldPos(new Vector3f(0.0f, 0.0f, 3.0f));
+		Vector3f cameraPos = new Vector3f(1.0f, 1.0f, -3.0f);
+		Vector3f cameraTarget = new Vector3f(0.45f, 0.0f, 1.0f);
+		Vector3f cameraUp = new Vector3f(0.0f, 1.0f, 0.0f);
+		p.setCamera(cameraPos, cameraTarget, cameraUp);
+		p.setPersProjInfo(persProjInfo);
 		
-		p.getWorldTrans().transferToBuffer(worldMatBuf);
-		worldMatBuf.rewind();
+		p.getWVPTrans().transferToBuffer(wvpMatBuf);
+		wvpMatBuf.rewind();
 		
-		GL20.glUniformMatrix4fv(worldLocation, true, worldMatBuf);
+		GL20.glUniformMatrix4fv(wvpLocation, true, wvpMatBuf);
 
 		GL20.glEnableVertexAttribArray(0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
@@ -200,9 +228,5 @@ public class Tutorial11 {
 		GL11.glDrawElements(GL11.GL_TRIANGLES, 12, GL11.GL_UNSIGNED_INT, 0);
 
 		GL20.glDisableVertexAttribArray(0);
-	}
-	
-	private static float sinf(float val) {
-		return (float) Math.sin(val);
 	}
 }

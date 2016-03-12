@@ -15,6 +15,7 @@ import org.lwjgl.system.MemoryUtil;
 import tw.slmt.lwjgl.examples.ogldev.OgldevUtil;
 import tw.slmt.lwjgl.examples.ogldev.PersProjInfo;
 import tw.slmt.lwjgl.examples.ogldev.Pipeline;
+import tw.slmt.lwjgl.examples.ogldev.Vector3f;
 
 public class Tutorial12 {
 
@@ -206,8 +207,8 @@ public class Tutorial12 {
 		scale += 0.5f;
 		
 		Pipeline p = new Pipeline();
-		p.rotate(new float[]{0.0f, scale, 0.0f});
-		p.worldPos(new float[]{0.0f, 0.0f, 5.0f});
+		p.rotate(new Vector3f(0.0f, scale, 0.0f));
+		p.worldPos(new Vector3f(0.0f, 0.0f, 5.0f));
 		p.setPersProjInfo(persProjInfo);
 		
 		p.getWPTrans().transferToBuffer(wpMatBuf);
