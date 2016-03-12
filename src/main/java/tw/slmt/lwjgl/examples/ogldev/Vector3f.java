@@ -19,12 +19,32 @@ public class Vector3f {
 		this.z = z;
 	}
 	
-	public Vector3f sub(Vector3f v) {
+	public Vector3f add(Vector3f v) {
+		Vector3f result = new Vector3f();
+		
+		result.x = x + v.x;
+		result.y = y + v.y;
+		result.z = z + v.z;
+		
+		return result;
+	}
+	
+	public Vector3f substract(Vector3f v) {
 		Vector3f result = new Vector3f();
 		
 		result.x = x - v.x;
 		result.y = y - v.y;
 		result.z = z - v.z;
+		
+		return result;
+	}
+	
+	public Vector3f multiply(float scalar) {
+		Vector3f result = new Vector3f();
+		
+		result.x = x * scalar;
+		result.y = y * scalar;
+		result.z = z * scalar;
 		
 		return result;
 	}

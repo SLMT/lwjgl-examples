@@ -38,6 +38,10 @@ public class Pipeline {
 		this.cameraUp = up;
 	}
 	
+	public void setCamera(Camera camera) {
+		setCamera(camera.getPos(), camera.getTarget(), camera.getUp());
+	}
+	
 	public Matrix4f getWorldTrans() {
 		Matrix4f scaleTrans = Matrix4f.
 				initScaleTransform(scale.getX(), scale.getY(), scale.getZ());
